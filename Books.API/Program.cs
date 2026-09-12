@@ -1,5 +1,6 @@
 using Books.API.Models;
 using Books.API.Repos;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,14 +60,23 @@ app.MapGet("/authors/{id:guid}", async (IAuthorsRepository repository, Guid id) 
     return Results.Ok(author);
 }).WithTags("Authors");
 
-app.MapPost("/authors", async (IAuthorsRepository repository, Author author) =>
+app.MapPost("/authors", async (HttpRequest request, IAuthorsRepository repository) =>
 {
+    using var reader = new StreamReader(request.Body);
+    var authorJson = await reader.ReadToEndAsync();
+
+    var author = Author.FromJson(authorJson);
     await repository.AddAsync(author);
+
     return Results.Created($"/authors/{author.Id}", author);
 }).WithTags("Authors");
 
-app.MapPut("/authors/{id:guid}", async (IAuthorsRepository repository, Guid id, Author updatedAuthor) =>
+app.MapPut("/authors/{id:guid}", async (HttpRequest request, IAuthorsRepository repository, Guid id) =>
 {
+    using var reader = new StreamReader(request.Body);
+    var updatedAuthorJson = await reader.ReadToEndAsync();
+
+    var updatedAuthor = Author.FromJson(updatedAuthorJson);
     var existingAuthor = await repository.GetByIdAsync(id);
 
     if (existingAuthor is null)
@@ -74,8 +84,8 @@ app.MapPut("/authors/{id:guid}", async (IAuthorsRepository repository, Guid id, 
         return Results.NotFound();
     }
 
-    updatedAuthor.Id = id;
-    await repository.UpdateAsync(updatedAuthor);
+    existingAuthor.UpdateFrom(updatedAuthor);
+    await repository.UpdateAsync(existingAuthor);
 
     return Results.NoContent();
 }).WithTags("Authors");

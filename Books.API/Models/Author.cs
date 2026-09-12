@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Nodes;
 
 namespace Books.API.Models
 {
@@ -12,5 +13,26 @@ namespace Books.API.Models
         public string Name { get; set; } = string.Empty;
 
         public ICollection<Book> Books { get; } = [];
+
+        public void UpdateFrom(Author author)
+        {
+            ArgumentNullException.ThrowIfNull(author);
+
+            Name = author.Name;
+        }
+
+        public static Author FromJson(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json))
+                throw new ArgumentException("JSON string cannot be null or whitespace.");
+
+            JsonNode authorNode = JsonNode.Parse(json)!;
+
+            return new Author
+            {
+                Id = authorNode["id"]?.GetValue<Guid>() ?? Guid.NewGuid(),
+                Name = authorNode["name"]?.GetValue<string>() ?? string.Empty
+            };
+        }
     }
 }

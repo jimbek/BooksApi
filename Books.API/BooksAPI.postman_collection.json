@@ -1,0 +1,134 @@
+{
+  "info": {
+    "_postman_id": "0bc7baca-13b8-4bbc-8e54-fc12bbba76fa",
+    "name": "BooksAPI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "12155506"
+  },
+  "item": [
+    {
+      "name": "Authors",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{DOMAIN}}/authors",
+          "host": [
+            "{{DOMAIN}}"
+          ],
+          "path": [
+            "authors"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Author",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Test Test\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{DOMAIN}}/authors",
+          "host": [
+            "{{DOMAIN}}"
+          ],
+          "path": [
+            "authors"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Author",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Test Test\"\r\n}"
+        },
+        "url": {
+          "raw": "{{DOMAIN}}/authors/{{id}}",
+          "host": [
+            "{{DOMAIN}}"
+          ],
+          "path": [
+            "authors",
+            "{{id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Author",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Test Test 2\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{DOMAIN}}/authors/{{id}}",
+          "host": [
+            "{{DOMAIN}}"
+          ],
+          "path": [
+            "authors",
+            "{{id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Author",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Test Test\"\r\n}"
+        },
+        "url": {
+          "raw": "{{DOMAIN}}/authors/{{id}}",
+          "host": [
+            "{{DOMAIN}}"
+          ],
+          "path": [
+            "authors",
+            "{{id}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "DOMAIN",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}
