@@ -4,18 +4,18 @@ namespace Books.API.Models
 {
     public class Book
     {
-        public Guid Id { get; set; }
+        [Required]
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
+        public Guid AuthorId { get; set; }
+
+        [Required]
+        [MaxLength(50)]
         public string Title { get; set; } = string.Empty;
 
         [Required]
+        [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
-
-        [Required]
-        public string Author { get; set; } = string.Empty;
-
-        [Required]
-        public DateTime PublishedDate { get; set; } = DateTime.UtcNow;
     }
 }
