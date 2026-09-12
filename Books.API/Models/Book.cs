@@ -17,5 +17,7 @@ namespace Books.API.Models
         [Required]
         [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
+
+        public Author Author { get; set; } = null!;
     }
 }

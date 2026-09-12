@@ -3,53 +3,52 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Books.API.Repos
 {
-    public class BooksRepository : IBooksRepository
+    public class AuthorsRepository : IAuthorsRepository
     {
         private bool _disposed = false;
 
         private readonly AppDbContext _context;
 
-        public BooksRepository(AppDbContext context)
+        public AuthorsRepository(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<Book>> GetAllAsync(Guid authorId, int page, int pageSize)
+        public async Task<IEnumerable<Author>> GetAllAsync(int page, int pageSize)
         {
             return await _context
-                            .Books
+                            .Authors
                             .AsNoTracking()
-                            .Where(b => b.AuthorId == authorId)
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)
                             .ToListAsync();
         }
 
-        public async Task<Book?> GetByIdAsync(Guid id)
+        public async Task<Author?> GetByIdAsync(Guid id)
         {
             return await _context
-                            .Books
+                            .Authors
                             .AsNoTracking()
-                            .FirstOrDefaultAsync(b => b.Id == id);
+                            .FirstOrDefaultAsync(a => a.Id == id);
         }
 
-        public async Task AddAsync(Book book)
+        public async Task AddAsync(Author author)
         {
-            await _context.Books.AddAsync(book);
+            await _context.Authors.AddAsync(author);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Book book)
+        public async Task UpdateAsync(Author author)
         {
-            _context.Books.Update(book);
+            _context.Authors.Update(author);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            var book = await _context.Books.FindAsync(id) ?? throw new KeyNotFoundException($"Book with Id {id} was not found.");
-            
-            _context.Books.Remove(book);
+            var author = await _context.Authors.FindAsync(id) ?? throw new KeyNotFoundException($"Author with id {id} not found.");
+
+            _context.Authors.Remove(author);
             await _context.SaveChangesAsync();
         }
 

@@ -12,11 +12,15 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 builder.Services.AddOpenApi();
 
 // Register the repository
-builder.Services.AddScoped<IBooksRepository, BooksRepository>();
+builder
+    .Services
+    .AddScoped<IAuthorsRepository, AuthorsRepository>()
+    .AddScoped<IBooksRepository, BooksRepository>();
 #endregion
 
 var app = builder.Build();
 
+#region Set up the app
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -30,43 +34,104 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+#endregion
 
-#region Map the endpoints for the Books API
-app.MapGet("/books", async (IBooksRepository repository, int page = 1, int pageSize = 10) =>
+#region Map the endpoints for Authors
+app.MapGet("/authors", async (IAuthorsRepository repository, int page = 1, int pageSize = 10) =>
 {
-    var books = await repository.GetAllAsync(page, pageSize);
+    if (page <= 0 || pageSize <= 0)
+        return Results.BadRequest("Params page and pageSize must be greater than 0.");
+
+    var authors = await repository.GetAllAsync(page, pageSize);
+
+    return Results.Ok(authors);
+}).WithTags("Authors");
+
+app.MapGet("/authors/{id:guid}", async (IAuthorsRepository repository, Guid id) =>
+{
+    var author = await repository.GetByIdAsync(id);
+
+    if (author is null)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(author);
+}).WithTags("Authors");
+
+app.MapPost("/authors", async (IAuthorsRepository repository, Author author) =>
+{
+    await repository.AddAsync(author);
+    return Results.Created($"/authors/{author.Id}", author);
+}).WithTags("Authors");
+
+app.MapPut("/authors/{id:guid}", async (IAuthorsRepository repository, Guid id, Author updatedAuthor) =>
+{
+    var existingAuthor = await repository.GetByIdAsync(id);
+
+    if (existingAuthor is null)
+    {
+        return Results.NotFound();
+    }
+
+    updatedAuthor.Id = id;
+    await repository.UpdateAsync(updatedAuthor);
+
+    return Results.NoContent();
+}).WithTags("Authors");
+
+app.MapDelete("/authors/{id:guid}", async (IAuthorsRepository repository, Guid id) =>
+{
+    var existingAuthor = await repository.GetByIdAsync(id);
+
+    if (existingAuthor is null)
+    {
+        return Results.NotFound();
+    }
+
+    await repository.DeleteAsync(id);
+    return Results.NoContent();
+}).WithTags("Authors");
+#endregion
+
+#region Map the endpoints for Books
+app.MapGet("/author/{authorId:guid}/books", async (IBooksRepository repository, Guid authorId, int page = 1, int pageSize = 10) =>
+{
+    if (page <= 0 || pageSize <= 0)
+        return Results.BadRequest("Params page and pageSize must be greater than 0.");
+
+    var books = await repository.GetAllAsync(authorId, page, pageSize);
 
     return Results.Ok(books);
-})
-.WithName("GetBooks");
+}).WithTags("Books");
 
-app.MapGet("/books/{id}", async (IBooksRepository repository, Guid id) =>
+app.MapGet("/author/{authorId:guid}/books/{id}", async (IBooksRepository repository, Guid authorId, Guid id) =>
 {
     var book = await repository.GetByIdAsync(id);
 
-    if (book is null)
+    if (book is null || book.AuthorId != authorId)
     {
         return Results.NotFound();
     }
 
     return Results.Ok(book);
-})
-.WithName("GetBook");
+}).WithTags("Books");
 
-app.MapPost("/books", async (IBooksRepository repository, Book book) =>
+app.MapPost("/author/{authorId:guid}/books", async (IBooksRepository repository, Guid authorId, Book book) =>
 {
-    book.Id = Guid.NewGuid();
+    book.AuthorId = authorId;
+
     await repository.AddAsync(book);
 
-    return Results.Created($"/books/{book.Id}", book);
-})
-.WithName("CreateBook");
+    return Results.Created($"/author/{authorId}/books/{book.Id}", book);
+}).WithTags("Books");
 
-app.MapPut("/books/{id}", async (IBooksRepository repository, Guid id, Book updatedBook) =>
+app.MapPut("/author/{authorId:guid}/books/{id}", async (IBooksRepository repository, Guid authorId, Guid id, Book updatedBook) =>
 {
     var existingBook = await repository.GetByIdAsync(id);
 
-    if (existingBook is null)
+    if (existingBook is null || existingBook.AuthorId != authorId)
+
     {
         return Results.NotFound();
     }
@@ -75,22 +140,20 @@ app.MapPut("/books/{id}", async (IBooksRepository repository, Guid id, Book upda
     await repository.UpdateAsync(updatedBook);
 
     return Results.NoContent();
-})
-.WithName("UpdateBook");
+}).WithTags("Books");
 
-app.MapDelete("/books/{id}", async (IBooksRepository repository, Guid id) =>
+app.MapDelete("/author/{authorId:guid}/books/{id}", async (IBooksRepository repository, Guid authorId, Guid id) =>
 {
-    bool exists = await repository.ExistsAsync(id);
+    var existingBook = await repository.GetByIdAsync(id);
 
-    if (!exists)
+    if (existingBook is null || existingBook.AuthorId != authorId)
     {
         return Results.NotFound();
     }
 
     await repository.DeleteAsync(id);
     return Results.NoContent();
-})
-.WithName("DeleteBook");
+}).WithTags("Books");
 #endregion
 
 #region Apply migrations

@@ -2,13 +2,11 @@
 
 namespace Books.API.Repos
 {
-    public interface IBooksRepository
+    public interface IBooksRepository : IDisposable
     {
-        Task<IEnumerable<Book>> GetAllAsync(int page, int pageSize);
+        Task<IEnumerable<Book>> GetAllAsync(Guid authorId, int page, int pageSize);
 
         Task<Book?> GetByIdAsync(Guid id);
-
-        Task<bool> ExistsAsync(Guid id);
 
         Task AddAsync(Book book);
 
