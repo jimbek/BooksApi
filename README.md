@@ -6,7 +6,7 @@ This is a REST API that implements CRUD operations on <code>Author</code> and <c
 - MS SQL Server
 
 ## Authorization
-All <code>POST</code>, <code>PUT</code> and <code>DELETE</code> endpoints require Bearer Authorization. You can visit https://www.jwt.io/ to generate a valid JWT token. For the purposes of this demo, follow the below template:
+All <code>POST</code>, <code>PUT</code> and <code>DELETE</code> endpoints require Bearer Authentication. You can visit https://www.jwt.io/ to generate a valid JWT token. For the purposes of this demo, follow the below template:
 
 #### Header
 ```
