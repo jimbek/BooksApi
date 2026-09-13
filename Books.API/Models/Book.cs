@@ -13,11 +13,11 @@ namespace Books.API.Models
 
         [Required]
         [MaxLength(50)]
-        public string Title { get; set; } = string.Empty;
+        public string? Title { get; set; }
 
         [Required]
         [MaxLength(500)]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
 
         public Author Author { get; set; } = null!;
 
@@ -26,11 +26,12 @@ namespace Books.API.Models
             ArgumentNullException.ThrowIfNull(book);
 
             AuthorId = book.AuthorId;
-            Title = book.Title;
-            Description = book.Description;
+
+            Title = book.Title ?? Title;
+            Description = book.Description ?? Description;
         }
 
-        public static Book FromJson(string json)
+        public static Book FromJson(Guid authorId, string json, bool throwExceptionIfInvalid = true)
         {
             if (string.IsNullOrWhiteSpace(json))
                 throw new ArgumentException("JSON string cannot be null or whitespace.");
@@ -40,9 +41,9 @@ namespace Books.API.Models
             return new Book
             {
                 Id = bookNode["id"]?.GetValue<Guid>() ?? Guid.NewGuid(),
-                AuthorId = bookNode["authorId"]?.GetValue<Guid>() ?? Guid.Empty,
-                Title = bookNode["title"]?.GetValue<string>() ?? string.Empty,
-                Description = bookNode["description"]?.GetValue<string>() ?? string.Empty
+                AuthorId = authorId,
+                Title = bookNode["title"]?.GetValue<string>() ?? (throwExceptionIfInvalid ? throw new ArgumentException("Invalid JSON: missing 'title'") : null),
+                Description = bookNode["description"]?.GetValue<string>() ?? (throwExceptionIfInvalid ? throw new ArgumentException("Invalid JSON: missing 'description'") : null)
             };
         }
     }

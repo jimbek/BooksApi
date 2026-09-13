@@ -10,7 +10,7 @@ namespace Books.API.Models
 
         [Required]
         [MaxLength(50)]
-        public string Name { get; set; } = string.Empty;
+        public string? Name { get; set; }
 
         public ICollection<Book> Books { get; } = [];
 
@@ -18,10 +18,10 @@ namespace Books.API.Models
         {
             ArgumentNullException.ThrowIfNull(author);
 
-            Name = author.Name;
+            Name = author.Name ?? Name;
         }
 
-        public static Author FromJson(string json)
+        public static Author FromJson(string json, bool throwExceptionIfInvalid = true)
         {
             if (string.IsNullOrWhiteSpace(json))
                 throw new ArgumentException("JSON string cannot be null or whitespace.");
@@ -31,7 +31,7 @@ namespace Books.API.Models
             return new Author
             {
                 Id = authorNode["id"]?.GetValue<Guid>() ?? Guid.NewGuid(),
-                Name = authorNode["name"]?.GetValue<string>() ?? string.Empty
+                Name = authorNode["name"]?.GetValue<string>() ?? (throwExceptionIfInvalid ? throw new ArgumentException("Invalid JSON: missing 'name'") : null)
             };
         }
     }
