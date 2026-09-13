@@ -1,6 +1,9 @@
 using Books.API.Models;
 using Books.API.Repos;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,28 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Set up authorization
+builder.
+    Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(jwtOptions =>
+    {
+        jwtOptions.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = false,
+            ValidIssuer = "https://localhost:44316",
+            ValidAudience = "https://localhost:44316",
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("a-string-secret-at-least-256-bits-long"))
+        };
+    });
+
+builder
+    .Services
+    .AddAuthorization();
 
 // Register the repository
 builder
@@ -73,7 +98,7 @@ app.MapGet("/authors/{id:guid}", async (IAuthorsRepository repository, Guid id) 
     }
 }).WithTags("Authors");
 
-app.MapPost("/authors", async (HttpRequest request, IAuthorsRepository repository) =>
+app.MapPost("/authors", [Authorize] async (HttpRequest request, IAuthorsRepository repository) =>
 {
     try
     {
@@ -91,7 +116,7 @@ app.MapPost("/authors", async (HttpRequest request, IAuthorsRepository repositor
     }
 }).WithTags("Authors");
 
-app.MapPut("/authors/{id:guid}", async (HttpRequest request, IAuthorsRepository repository, Guid id) =>
+app.MapPut("/authors/{id:guid}", [Authorize] async (HttpRequest request, IAuthorsRepository repository, Guid id) =>
 {
     try
     {
@@ -117,7 +142,7 @@ app.MapPut("/authors/{id:guid}", async (HttpRequest request, IAuthorsRepository 
     }
 }).WithTags("Authors");
 
-app.MapDelete("/authors/{id:guid}", async (IAuthorsRepository repository, Guid id) =>
+app.MapDelete("/authors/{id:guid}", [Authorize] async (IAuthorsRepository repository, Guid id) =>
 {
     try
     {
@@ -192,7 +217,7 @@ app.MapGet("/authors/{authorId:guid}/books/{id}", async (IAuthorsRepository auth
 }).WithTags("Books");
 
 
-app.MapPost("/authors/{authorId:guid}/books", async (HttpRequest request, IAuthorsRepository authorsRepository, IBooksRepository booksRepository, Guid authorId) =>
+app.MapPost("/authors/{authorId:guid}/books", [Authorize] async (HttpRequest request, IAuthorsRepository authorsRepository, IBooksRepository booksRepository, Guid authorId) =>
 {
     try
     {
@@ -218,7 +243,7 @@ app.MapPost("/authors/{authorId:guid}/books", async (HttpRequest request, IAutho
     }
 }).WithTags("Books");
 
-app.MapPut("/authors/{authorId:guid}/books/{id}", async (HttpRequest request, IAuthorsRepository authorsRepository, IBooksRepository booksRepository, Guid authorId, Guid id) =>
+app.MapPut("/authors/{authorId:guid}/books/{id}", [Authorize] async (HttpRequest request, IAuthorsRepository authorsRepository, IBooksRepository booksRepository, Guid authorId, Guid id) =>
 {
     try
     {
@@ -253,7 +278,7 @@ app.MapPut("/authors/{authorId:guid}/books/{id}", async (HttpRequest request, IA
     }
 }).WithTags("Books");
 
-app.MapDelete("/authors/{authorId:guid}/books/{id}", async (IAuthorsRepository authorsRepository, IBooksRepository booksRepository, Guid authorId, Guid id) =>
+app.MapDelete("/authors/{authorId:guid}/books/{id}", [Authorize] async (IAuthorsRepository authorsRepository, IBooksRepository booksRepository, Guid authorId, Guid id) =>
 {
     try
     {
@@ -289,5 +314,8 @@ using (var scope = app.Services.CreateScope())
     await db.Database.MigrateAsync();
 }
 #endregion
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();

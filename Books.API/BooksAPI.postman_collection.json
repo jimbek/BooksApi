@@ -30,7 +30,13 @@
           "name": "Author",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo0NDMxNiIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzE2In0.fL0mHk2U7wm2f2R-3EF8-EYWXS0XZdLL_Chlz38NE3o",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\r\n    \"name\": \"Test Test\"\r\n}",
@@ -74,7 +80,13 @@
           "name": "Author",
           "request": {
             "method": "PUT",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo0NDMxNiIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzE2In0.fL0mHk2U7wm2f2R-3EF8-EYWXS0XZdLL_Chlz38NE3o",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\r\n    \"name\": \"Test Test 2\"\r\n}",
@@ -101,7 +113,13 @@
           "name": "Author",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo0NDMxNiIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzE2In0.fL0mHk2U7wm2f2R-3EF8-EYWXS0XZdLL_Chlz38NE3o",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{DOMAIN}}/authors/{{id}}",
               "host": [
@@ -163,7 +181,13 @@
           "name": "Book",
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo0NDMxNiIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzE2In0.fL0mHk2U7wm2f2R-3EF8-EYWXS0XZdLL_Chlz38NE3o",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\r\n    \"title\": \"Title\",\r\n    \"description\": \"Description\"\r\n}",
@@ -191,7 +215,13 @@
           "name": "Book",
           "request": {
             "method": "PUT",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo0NDMxNiIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzE2In0.fL0mHk2U7wm2f2R-3EF8-EYWXS0XZdLL_Chlz38NE3o",
+                "type": "text"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\r\n    \"title\": \"Title 2\",\r\n    \"description\": \"Description 2\"\r\n}",
@@ -220,7 +250,13 @@
           "name": "Book",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo0NDMxNiIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzE2In0.fL0mHk2U7wm2f2R-3EF8-EYWXS0XZdLL_Chlz38NE3o",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{DOMAIN}}/authors/{{author_id}}/books/{{id}}",
               "host": [
