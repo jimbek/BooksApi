@@ -5,6 +5,9 @@ This is a REST API that implements CRUD operations on <code>Author</code> and <c
 - .NET 10
 - MS SQL Server
 
+## Caching
+The <code>GET /authors</code> call caches it's response for 15 seconds, as long as the corresponding <code>POST</code>, <code>PUT</code> and <code>DELETE</code> endpoints are not being called in the meanwhile. This mechanism uses the Output Caching Middleware of .Net by adding the <code>Age</code> header to the response.
+
 ## Authorization
 All <code>POST</code>, <code>PUT</code> and <code>DELETE</code> endpoints require Bearer Authentication. You can visit https://www.jwt.io/ to generate a valid JWT token. For the purposes of this demo, follow the below template:
 
